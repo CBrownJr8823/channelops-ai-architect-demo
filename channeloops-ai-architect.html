@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corey Brown | AI Solutions Architect Demo</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+      --space-1: .25rem; --space-2: .5rem; --space-3: .75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem;
+      --color-bg:#0d1017; --color-surface:#141a25; --color-surface-2:#1a2130; --color-surface-offset:#1e2636; --color-border:#2c374b;
+      --color-text:#f6f5f0; --color-text-muted:#c6cad3; --color-text-faint:#8d95a3; --color-primary:#76dfff; --color-primary-hover:#4cc7ea;
+      --color-success:#8fd36c; --color-warning:#e4a571; --color-blue:#74aaff; --shadow-sm:0 1px 2px rgba(0,0,0,.18); --shadow-md:0 12px 28px rgba(0,0,0,.28);
+      --radius-sm:.375rem; --radius-md:.75rem; --radius-lg:1rem; --radius-xl:1.25rem; --radius-full:999px;
+      --font-display:'Cabinet Grotesk','Inter',sans-serif; --font-body:'Satoshi','Inter',sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg:#161513; --color-surface:#1c1b19; --color-surface-2:#23211f; --color-surface-offset:#2b2824; --color-border:#3d3a35;
+      --color-text:#f8f7f2; --color-text-muted:#cbc6bf; --color-text-faint:#8b857e; --color-primary:#81d7ff; --color-primary-hover:#59bee7;
+      --color-success:#7fb35b; --color-warning:#d08a5e; --color-blue:#72acd8; --shadow-sm:0 1px 2px rgba(0,0,0,.22); --shadow-md:0 12px 28px rgba(0,0,0,.34);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; min-height: 100vh; font-family: var(--font-body); font-size: var(--text-base); line-height: 1.6;
+      color: var(--color-text);
+      background:
+        radial-gradient(circle at top left, rgba(118,223,255,.08), transparent 28%),
+        linear-gradient(180deg, var(--color-bg) 0%, var(--color-surface-offset) 100%);
+    }
+    h1, h2, h3, h4 { margin: 0; line-height: 1.08; font-family: var(--font-display); }
+    p { margin: 0; color: var(--color-text-muted); }
+    button, input, select, textarea { font: inherit; }
+    .app { max-width: 1420px; margin: 0 auto; padding: var(--space-6); }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-6);
+      padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-xl);
+      background: rgba(255,255,255,.03); backdrop-filter: blur(10px); box-shadow: var(--shadow-sm);
+    }
+    .brand { display:flex; align-items:center; gap: var(--space-3); }
+    .logo {
+      width: 44px; height: 44px; border-radius: 14px; display:grid; place-items:center;
+      background: radial-gradient(circle at top left, var(--color-primary), rgba(118,223,255,.18));
+      border: 1px solid rgba(255,255,255,.12); box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
+    }
+    .brand small { display:block; color: var(--color-text-faint); text-transform: uppercase; letter-spacing: .12em; font-size: var(--text-xs); }
+    .brand .title { font-size: var(--text-lg); font-weight: 700; }
+    .actions { display:flex; align-items:center; gap: var(--space-3); flex-wrap: wrap; }
+    .btn {
+      border: 1px solid var(--color-border); background: var(--color-surface-2); color: var(--color-text);
+      padding: .82rem 1rem; border-radius: var(--radius-full); cursor: pointer; transition: .18s ease;
+    }
+    .btn:hover { border-color: rgba(255,255,255,.24); transform: translateY(-1px); }
+    .btn-primary { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover)); color: #07131a; border-color: transparent; font-weight: 700; }
+    .hero { display:grid; grid-template-columns: 1.2fr .9fr; gap: var(--space-4); margin-bottom: var(--space-4); }
+    .hero-card, .result-card, .form-card {
+      background: rgba(255,255,255,.03); border: 1px solid var(--color-border); border-radius: var(--radius-xl);
+      padding: var(--space-5); box-shadow: var(--shadow-sm);
+    }
+    .hero-card.featured {
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+      position: relative; overflow: hidden;
+    }
+    .hero-card.featured::after {
+      content: ""; position: absolute; inset: auto -10% -35% auto; width: 260px; height: 260px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(118,223,255,.18), transparent 68%); pointer-events: none;
+    }
+    .eyebrow { color: var(--color-text-faint); text-transform: uppercase; letter-spacing: .12em; font-size: var(--text-xs); margin-bottom: var(--space-2); }
+    .hero h1 { font-size: var(--text-2xl); max-width: 12ch; margin-bottom: var(--space-3); }
+    .hero p { max-width: 64ch; }
+    .metric-row { display:grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); margin-top: var(--space-5); }
+    .metric {
+      border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-4); background: var(--color-surface-2);
+    }
+    .metric strong { display:block; font-size: var(--text-lg); margin-bottom: .2rem; }
+    .metric span { color: var(--color-text-faint); font-size: var(--text-sm); }
+    .lens-tags { display:flex; flex-wrap:wrap; gap: .5rem; margin-top: var(--space-5); }
+    .tag {
+      padding: .45rem .75rem; border-radius: var(--radius-full); background: rgba(118,223,255,.12);
+      color: var(--color-primary); border: 1px solid rgba(118,223,255,.2); font-size: var(--text-xs); font-weight: 600;
+    }
+    .layout { display:grid; grid-template-columns: 420px 1fr; gap: var(--space-4); align-items:start; }
+    .form-card h2, .result-card h2, .result-card h3 { font-size: var(--text-lg); margin-bottom: var(--space-4); }
+    .form-grid { display:grid; gap: var(--space-4); }
+    label { display:grid; gap: .55rem; color: var(--color-text-muted); font-size: var(--text-sm); }
+    select, textarea {
+      width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--color-border); background: var(--color-surface-2);
+      color: var(--color-text); padding: .95rem 1rem; outline: none;
+    }
+    select:focus, textarea:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(118,223,255,.15); }
+    textarea { min-height: 132px; resize: vertical; }
+    .scenario-row { display:flex; flex-wrap:wrap; gap: .5rem; margin-top: var(--space-3); }
+    .scenario-btn {
+      border: 1px solid var(--color-border); background: transparent; color: var(--color-text-muted); padding: .65rem .9rem; border-radius: var(--radius-full); cursor:pointer;
+    }
+    .scenario-btn:hover { color: var(--color-text); border-color: rgba(255,255,255,.24); }
+    .summary-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--space-4); }
+    .result-card + .result-card { margin-top: var(--space-4); }
+    .headline { font-size: var(--text-xl); margin-bottom: var(--space-3); max-width: 18ch; }
+    .list { display:grid; gap: .9rem; padding-left: 1rem; color: var(--color-text-muted); }
+    .list li::marker { color: var(--color-primary); }
+    .phase-grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--space-3); margin-top: var(--space-4); }
+    .phase {
+      padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface-2);
+      min-height: 100%;
+    }
+    .phase span { display:block; color: var(--color-text-faint); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .4rem; }
+    .phase strong { display:block; margin-bottom: .45rem; }
+    .footer-note {
+      margin-top: var(--space-4); padding: var(--space-4); border-radius: var(--radius-lg); background: rgba(118,223,255,.08); border:1px solid rgba(118,223,255,.15);
+      color: var(--color-text);
+    }
+    .mini-note {
+      display:grid; grid-template-columns: 160px 1fr; gap: var(--space-4); align-items:start;
+    }
+    .mini-note strong { display:block; color: var(--color-text); margin-bottom: .35rem; }
+    .signature {
+      display:inline-flex; align-items:center; gap:.55rem; padding:.45rem .7rem; border-radius:var(--radius-full);
+      border:1px solid rgba(118,223,255,.18); background:rgba(118,223,255,.08); color:var(--color-primary); font-size:var(--text-xs); font-weight:700;
+    }
+    @media (max-width: 1100px) {
+      .hero, .layout, .summary-grid, .phase-grid, .mini-note { grid-template-columns: 1fr; }
+      .hero h1 { max-width: 16ch; }
+    }
+    @media (max-width: 680px) {
+      .app { padding: var(--space-4); }
+      .metric-row { grid-template-columns: 1fr; }
+      .topbar { flex-direction: column; align-items: flex-start; }
+      .actions { width: 100%; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#07131a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-label="Logo">
+            <rect x="4" y="4" width="16" height="16" rx="4"></rect>
+            <path d="M9 8v8"></path>
+            <path d="M15 8v8"></path>
+            <path d="M9 12h6"></path>
+          </svg>
+        </div>
+        <div>
+          <small>Interview demo</small>
+          <div class="title">Corey Brown | AI Solutions Architect Demo</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="themeToggle" aria-label="Toggle theme">Theme</button>
+        <button class="btn btn-primary" id="loadBest">Load strongest scenario</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-card featured">
+        <div class="eyebrow">Discovery to delivery</div>
+        <h1>Turn client needs into implementation-ready AI architecture.</h1>
+        <p>This demo is designed to show how I translate client requirements into delivery-ready AI architecture: structured discovery, clear system design, practical integrations, explicit guardrails, and implementation handoff another engineer can execute.</p>
+        <div class="metric-row">
+          <div class="metric">
+            <strong id="metricPattern">RAG + Agent</strong>
+            <span>Recommended pattern</span>
+          </div>
+          <div class="metric">
+            <strong id="metricReadiness">High</strong>
+            <span>Integration readiness</span>
+          </div>
+          <div class="metric">
+            <strong id="metricValue">6-8 hrs</strong>
+            <span>Estimated weekly savings / user</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="eyebrow">Evaluation lens</div>
+        <h2 class="headline">Built for operators, architects, and delivery teams.</h2>
+        <p>I framed this prototype around the work an AI Solutions Architect actually does in practice: client discovery, architecture design, integration mapping, guardrails, engineer handoff, and phased rollout. The goal is to make my architecture thinking visible in a way that feels practical, concise, and implementation-ready.</p>
+        <div class="lens-tags">
+          <span class="tag">Discovery</span>
+          <span class="tag">RAG</span>
+          <span class="tag">Tool calling</span>
+          <span class="tag">Human approval</span>
+          <span class="tag">Integration map</span>
+          <span class="tag">Observability</span>
+          <span class="tag">Execution discipline</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="result-card" style="margin-bottom: var(--space-4);">
+      <div class="mini-note">
+        <div>
+          <div class="eyebrow">Why I built it this way</div>
+          <span class="signature">Personal build signature</span>
+        </div>
+        <div>
+          <strong>My operating style shows up in the architecture.</strong>
+          <p>This prototype reflects how I like to work: disciplined discovery, clean handoffs, and systems that can perform under pressure. That mindset was shaped by my background as a combat engineer and by professional football environments tied to the Raiders, Cardinals, and Texans, so I wanted the demo to feel like a real delivery artifact rather than a generic AI sample.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <aside class="form-card">
+        <div class="eyebrow">Client intake</div>
+        <h2>Solution inputs</h2>
+        <div class="form-grid">
+          <label>
+            Client type
+            <select id="clientType">
+              <option>Managed service provider</option>
+              <option>Channel sales organization</option>
+              <option>Legal operations team</option>
+              <option>Professional services firm</option>
+            </select>
+          </label>
+
+          <label>
+            Primary use case
+            <select id="useCase">
+              <option>Service desk triage and resolution</option>
+              <option>Sales follow-up and lead qualification</option>
+              <option>Internal knowledge assistant</option>
+              <option>Executive operations assistant</option>
+            </select>
+          </label>
+
+          <label>
+            Core systems
+            <select id="systems">
+              <option>ConnectWise + Microsoft 365 + Teams + SharePoint</option>
+              <option>HubSpot + Outlook + Teams + CRM notes</option>
+              <option>Clio + Microsoft 365 + internal file shares</option>
+              <option>Salesforce + ServiceNow + Microsoft 365 + Azure</option>
+            </select>
+          </label>
+
+          <label>
+            Sensitivity / compliance posture
+            <select id="sensitivity">
+              <option>Moderate internal operational data</option>
+              <option>High with customer records</option>
+              <option>High with legal / regulated content</option>
+            </select>
+          </label>
+
+          <label>
+            Desired timeline
+            <select id="timeline">
+              <option>2-4 week pilot</option>
+              <option>6-8 weeks phased rollout</option>
+              <option>Quarter-long transformation initiative</option>
+            </select>
+          </label>
+
+          <label>
+            Discovery notes
+            <textarea id="notes">This prototype is designed to show how I approach AI delivery: clear requirements, defined handoffs, disciplined execution, and measurable outcomes. The goal is to move from discovery into a system another engineer can implement confidently.</textarea>
+          </label>
+
+          <button class="btn btn-primary" id="generateBtn">Generate recommendation</button>
+        </div>
+
+        <div class="scenario-row">
+          <button class="scenario-btn" data-scenario="msp">MSP help-desk copilot</button>
+          <button class="scenario-btn" data-scenario="sales">Channel sales follow-up assistant</button>
+          <button class="scenario-btn" data-scenario="legal">Legal operations document copilot</button>
+          <button class="scenario-btn" data-scenario="enterprise">Salesforce + ServiceNow operations copilot</button>
+        </div>
+      </aside>
+
+      <main>
+        <section class="result-card">
+          <div class="eyebrow">Architecture recommendation</div>
+          <h2 id="headline">Governed help-desk copilot with retrieval, ticket actions, and human escalation.</h2>
+          <p id="rationale">The recommended design combines retrieval over SOPs, client runbooks, and vendor documentation with tool-calling into the PSA and collaboration stack, while keeping all ticket-changing actions behind approval gates.</p>
+        </section>
+
+        <section class="result-card">
+          <h3>Architecture overview</h3>
+          <div class="phase-grid" style="grid-template-columns: repeat(5, minmax(0,1fr));">
+            <div class="phase"><span>Step 1</span><strong>User request</strong><p>Technician, seller, or operator submits a task or question.</p></div>
+            <div class="phase"><span>Step 2</span><strong>Orchestrator</strong><p>Classifies intent, selects tools, and applies routing logic.</p></div>
+            <div class="phase"><span>Step 3</span><strong>Retrieval & tools</strong><p>Pulls knowledge, APIs, ticketing, CRM, or ITSM context.</p></div>
+            <div class="phase"><span>Step 4</span><strong>Human approval</strong><p>High-risk actions pause for review before execution.</p></div>
+            <div class="phase"><span>Step 5</span><strong>System of record</strong><p>Approved updates write back to the PSA, CRM, or ITSM platform.</p></div>
+          </div>
+        </section>
+
+        <div class="summary-grid">
+          <section class="result-card">
+            <h3>System design</h3>
+            <ul class="list" id="systemDesign"></ul>
+          </section>
+
+          <section class="result-card">
+            <h3>Integration plan</h3>
+            <ul class="list" id="integrationPlan"></ul>
+          </section>
+
+          <section class="result-card">
+            <h3>Guardrails</h3>
+            <ul class="list" id="guardrails"></ul>
+          </section>
+
+          <section class="result-card">
+            <h3>Implementation handoff</h3>
+            <ul class="list" id="handoff"></ul>
+          </section>
+        </div>
+
+        <section class="result-card">
+          <h3>Phased rollout</h3>
+          <div class="phase-grid" id="phases"></div>
+          <div class="footer-note" id="execNote"></div>
+        </section>
+      </main>
+    </section>
+  </div>
+
+  <script>
+    const scenarios = {
+      msp: {
+        form: {
+          clientType: 'Managed service provider',
+          useCase: 'Service desk triage and resolution',
+          systems: 'ConnectWise + Microsoft 365 + Teams + SharePoint',
+          sensitivity: 'Moderate internal operational data',
+          timeline: '2-4 week pilot'
+        },
+        metricPattern: 'RAG + Agent',
+        metricReadiness: 'High',
+        metricValue: '6-8 hrs',
+        headline: 'Governed help-desk copilot with retrieval, ticket actions, and human escalation.',
+        rationale: 'The recommended design combines retrieval over SOPs, client runbooks, and vendor documentation with tool-calling into the PSA and collaboration stack, while keeping all ticket-changing actions behind approval gates.',
+        systemDesign: [
+          'Use retrieval over SOPs, client runbooks, KB articles, and vendor docs for grounded responses.',
+          'Add a task orchestrator that classifies intents into lookup, summarize, recommend, or act.',
+          'Expose tightly scoped tools for ticket enrichment, draft replies, escalation suggestions, and knowledge capture.',
+          'Require human confirmation before status changes, closures, or outbound client communications.'
+        ],
+        integrationPlan: [
+          'Pull tickets, statuses, and metadata from the PSA platform through authenticated APIs.',
+          'Use Microsoft Graph and Teams hooks for notifications, approvals, and collaboration.',
+          'Index SharePoint knowledge sources with scheduled refresh and source ownership metadata.',
+          'Log prompts, retrieval traces, tool calls, and outcomes into an observability store for QA.'
+        ],
+        guardrails: [
+          'Read-only by default, with approvals required for any ticket mutations.',
+          'Role-based tool access and customer-aware data partitioning.',
+          'Cite retrieved sources and abstain when confidence is low or evidence is missing.',
+          'Maintain audit trails for prompts, retrieved chunks, tool calls, and approvers.'
+        ],
+        handoff: [
+          'Document environment variables, OAuth scopes, webhook dependencies, and secret rotation requirements.',
+          'Specify eval sets for top ticket categories, low-confidence handling, and false escalation checks.',
+          'List failure modes, support boundaries, and which actions remain human-only in v1.',
+          'Provide rollout ownership between architect, forward-deployed engineer, and client operations lead.'
+        ],
+        phases: [
+          ['Phase 1', 'Discovery', 'Map workflows, resolve high-volume ticket classes, and identify trusted knowledge sources.'],
+          ['Phase 2', 'Pilot', 'Launch read-only retrieval and draft suggestions for one technician pod.'],
+          ['Phase 3', 'Validation', 'Add ticket enrichment and approval-based actions, then measure deflection and resolution quality.'],
+          ['Phase 4', 'Rollout', 'Expand to additional clients, formalize observability, and operationalize support.']
+        ],
+        execNote: 'Executive value: reduce swivel-chair work, improve response consistency, and show a disciplined path from discovery to production handoff.'
+      },
+      sales: {
+        form: {
+          clientType: 'Channel sales organization',
+          useCase: 'Sales follow-up and lead qualification',
+          systems: 'HubSpot + Outlook + Teams + CRM notes',
+          sensitivity: 'High with customer records',
+          timeline: '6-8 weeks phased rollout'
+        },
+        metricPattern: 'Agent workflow',
+        metricReadiness: 'Medium-high',
+        metricValue: '4-6 hrs',
+        headline: 'Revenue-assist workflow for lead qualification, follow-up drafting, and CRM hygiene.',
+        rationale: 'This architecture favors a workflow-driven agent that summarizes inbound lead context, proposes next-best actions, drafts personalized follow-ups, and keeps CRM updates behind approval and data quality checks.',
+        systemDesign: [
+          'Trigger on new leads, meeting notes, or stale opportunities that need follow-up.',
+          'Retrieve CRM context, prior outreach, call notes, and solution collateral before generating suggestions.',
+          'Use structured outputs for qualification scoring, follow-up drafts, and routing recommendations.',
+          'Keep all record updates approval-gated until confidence and data quality are validated.'
+        ],
+        integrationPlan: [
+          'Read and draft against CRM and email context with scoped permissions.',
+          'Use collaboration hooks to route manager approvals and exception reviews.',
+          'Store evaluation feedback from sellers to improve prompts and qualification logic over time.',
+          'Capture campaign and meeting metadata to enrich future recommendations.'
+        ],
+        guardrails: [
+          'No autonomous outbound messaging without human review in early phases.',
+          'Mask or minimize sensitive customer data where not required for the task.',
+          'Enforce approved messaging templates for regulated or brand-sensitive outreach.',
+          'Maintain logs of recommendations, edits, approvals, and outcomes for quality review.'
+        ],
+        handoff: [
+          'Define approval workflow states and CRM fields the implementation team can safely write to.',
+          'Document confidence thresholds for recommend-only versus draft-ready outputs.',
+          'List integration dependencies across CRM, email, and collaboration tools.',
+          'Provide a support playbook for seller feedback, bad suggestions, and template drift.'
+        ],
+        phases: [
+          ['Phase 1', 'Discovery', 'Identify lead stages, seller pain points, and required CRM fields.'],
+          ['Phase 2', 'Pilot', 'Roll out meeting summaries and follow-up drafts to a small revenue team.'],
+          ['Phase 3', 'Validation', 'Measure response speed, acceptance rate, and CRM hygiene improvement.'],
+          ['Phase 4', 'Rollout', 'Expand automation scope and standardize approval patterns.']
+        ],
+        execNote: 'Executive value: improve seller throughput while preserving message quality, compliance, and operational discipline.'
+      },
+      legal: {
+        form: {
+          clientType: 'Legal operations team',
+          useCase: 'Internal knowledge assistant',
+          systems: 'Clio + Microsoft 365 + internal file shares',
+          sensitivity: 'High with legal / regulated content',
+          timeline: '6-8 weeks phased rollout'
+        },
+        metricPattern: 'Secure RAG',
+        metricReadiness: 'Medium',
+        metricValue: '3-5 hrs',
+        headline: 'Secure document copilot for matter lookup, policy retrieval, and attorney-in-the-loop drafting.',
+        rationale: 'The design centers on secure retrieval and policy-aware answer generation, with document segmentation, matter-based access control, and attorney review before any draft becomes an external or client-facing artifact.',
+        systemDesign: [
+          'Use document ingestion, chunking, and retrieval over approved legal templates and policy sources.',
+          'Apply matter-based access filters before any retrieval call is executed.',
+          'Generate structured summaries, clause explanations, and draft-first outputs with source citations.',
+          'Separate knowledge lookup from any system update or document creation actions.'
+        ],
+        integrationPlan: [
+          'Read matter metadata from Clio and synchronize document permissions from Microsoft 365.',
+          'Index approved templates and internal policies from governed file locations.',
+          'Log assistant usage and feedback events for quality review and auditability.',
+          'Route review-ready drafts into a secure collaboration queue rather than external channels.'
+        ],
+        guardrails: [
+          'Strict matter-based access controls and no cross-matter retrieval.',
+          'Mandatory human review before generated text is reused in legal work product.',
+          'Source citation display and answer abstention when retrieval confidence is weak.',
+          'Retention and audit logging controls aligned to internal legal operations policy.'
+        ],
+        handoff: [
+          'Document data retention, indexing scope, RBAC design, and exception handling.',
+          'Provide eval cases for privilege leakage, unsupported legal questions, and stale templates.',
+          'List every indexed repository and the approval workflow for adding new sources.',
+          'Define support ownership between legal ops, IT, and the implementation team.'
+        ],
+        phases: [
+          ['Phase 1', 'Discovery', 'Confirm document classes, access rules, and acceptable assistant boundaries.'],
+          ['Phase 2', 'Pilot', 'Launch secure lookup and summaries for a narrow internal user group.'],
+          ['Phase 3', 'Validation', 'Test retrieval accuracy, access control integrity, and abstention behavior.'],
+          ['Phase 4', 'Rollout', 'Expand sources, formalize review processes, and operationalize support.']
+        ],
+        execNote: 'Executive value: faster internal research and drafting support without compromising access control, review discipline, or handoff quality.'
+      },
+      enterprise: {
+        form: {
+          clientType: 'Professional services firm',
+          useCase: 'Executive operations assistant',
+          systems: 'Salesforce + ServiceNow + Microsoft 365 + Azure',
+          sensitivity: 'High with customer records',
+          timeline: '6-8 weeks phased rollout'
+        },
+        metricPattern: 'Agent + Workflow',
+        metricReadiness: 'High',
+        metricValue: '5-7 hrs',
+        headline: 'Cross-system operations copilot spanning Salesforce, ServiceNow, Microsoft 365, and Azure.',
+        rationale: 'This pattern uses an orchestrator agent with structured tool calling to summarize account and case context, coordinate work across CRM and ITSM systems, and keep higher-risk actions behind approvals and auditable writebacks.',
+        systemDesign: [
+          'Use an orchestrator agent that classifies requests and dispatches to CRM, ITSM, and knowledge tools.',
+          'Blend retrieval over SOPs, account notes, and service documentation with structured tool outputs.',
+          'Separate read, recommend, and write actions into distinct execution modes with approval thresholds.',
+          'Use durable workflow steps for escalations, exception handling, and retry-safe system updates.'
+        ],
+        integrationPlan: [
+          'Read account, opportunity, and activity context from Salesforce APIs.',
+          'Pull incidents, change tickets, and status workflows from ServiceNow.',
+          'Use Microsoft Graph for collaboration context, approvals, and delivery into Teams or Outlook.',
+          'Log workflow events, prompts, and tool traces into Azure-hosted observability and storage services.'
+        ],
+        guardrails: [
+          'Apply least-privilege OAuth scopes and separate service identities by platform and action type.',
+          'Require approval before writing back to ServiceNow states, Salesforce records, or customer-facing messages.',
+          'Track prompt inputs, tool calls, confidence, and exception states for audit and supportability.',
+          'Fallback to read-only recommendation mode during API outages or schema mismatches.'
+        ],
+        handoff: [
+          'Document API dependencies, field mappings, approval points, and environment configuration requirements.',
+          'Provide tool schemas, retry logic, and rate-limit handling notes for engineers building the production version.',
+          'Define eval coverage for bad record matches, stale context, and multi-system conflict scenarios.',
+          'Clarify support ownership between client IT, business ops, and the forward-deployed team.'
+        ],
+        phases: [
+          ['Phase 1', 'Discovery', 'Map business workflows, approval boundaries, and cross-system dependencies.'],
+          ['Phase 2', 'Pilot', 'Launch read-only summaries and action recommendations for a narrow stakeholder group.'],
+          ['Phase 3', 'Validation', 'Measure workflow fit, recommendation quality, and support burden before writebacks.'],
+          ['Phase 4', 'Rollout', 'Enable approved actions, expand use cases, and standardize handoff documentation.']
+        ],
+        execNote: 'Executive value: cleaner coordination across CRM and ITSM systems, less swivel-chair work, and stronger implementation readiness.'
+      }
+    };
+
+    const elements = {
+      clientType: document.getElementById('clientType'),
+      useCase: document.getElementById('useCase'),
+      systems: document.getElementById('systems'),
+      sensitivity: document.getElementById('sensitivity'),
+      timeline: document.getElementById('timeline'),
+      notes: document.getElementById('notes')
+    };
+
+    function setList(id, items) {
+      const list = document.getElementById(id);
+      list.innerHTML = '';
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        list.appendChild(li);
+      });
+    }
+
+    function setPhases(phases) {
+      const container = document.getElementById('phases');
+      container.innerHTML = '';
+      phases.forEach(([phase, label, text]) => {
+        const card = document.createElement('div');
+        card.className = 'phase';
+        card.innerHTML = `<span>${phase}</span><strong>${label}</strong><p>${text}</p>`;
+        container.appendChild(card);
+      });
+    }
+
+    function applyScenario(key) {
+      const s = scenarios[key];
+      Object.entries(s.form).forEach(([k, v]) => {
+        elements[k].value = v;
+      });
+      document.getElementById('metricPattern').textContent = s.metricPattern;
+      document.getElementById('metricReadiness').textContent = s.metricReadiness;
+      document.getElementById('metricValue').textContent = s.metricValue;
+      document.getElementById('headline').textContent = s.headline;
+      document.getElementById('rationale').textContent = s.rationale;
+      setList('systemDesign', s.systemDesign);
+      setList('integrationPlan', s.integrationPlan);
+      setList('guardrails', s.guardrails);
+      setList('handoff', s.handoff);
+      setPhases(s.phases);
+      document.getElementById('execNote').textContent = s.execNote;
+    }
+
+    function generateFromInputs() {
+      const useCase = elements.useCase.value;
+      if (elements.systems.value.includes('Salesforce + ServiceNow')) return applyScenario('enterprise');
+      if (useCase.includes('Service desk')) return applyScenario('msp');
+      if (useCase.includes('Sales follow-up')) return applyScenario('sales');
+      if (useCase.includes('knowledge assistant') && elements.clientType.value.includes('Legal')) return applyScenario('legal');
+      if (elements.clientType.value.includes('Legal')) return applyScenario('legal');
+      if (elements.clientType.value.includes('Channel sales')) return applyScenario('sales');
+      if (useCase.includes('Executive operations')) return applyScenario('enterprise');
+      return applyScenario('msp');
+    }
+
+    document.getElementById('generateBtn').addEventListener('click', generateFromInputs);
+    document.getElementById('loadBest').addEventListener('click', () => applyScenario('msp'));
+    document.querySelectorAll('.scenario-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyScenario(btn.dataset.scenario));
+    });
+
+    const themeToggle = document.getElementById('themeToggle');
+    let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    themeToggle.addEventListener('click', () => {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    });
+
+    applyScenario('msp');
+  </script>
+</body>
+</html>
